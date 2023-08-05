@@ -1,0 +1,54 @@
+{
+  "Version": 1,
+  "Hash": "88GfmBAi5UnXCQnifnXOqazfY5BaVXQreR2GleiG4H8=",
+  "Source": "Store",
+  "BasePath": "_content/Store",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "Store\\wwwroot",
+      "Source": "Store",
+      "ContentRoot": "E:\\Windows\\Underway\\Project\\Store\\Store\\wwwroot\\",
+      "BasePath": "_content/Store",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "E:\\Windows\\Underway\\Project\\Store\\Store\\wwwroot\\ProductsImages\\d205360a-b036-4252-8b11-9d76670924a7.jpg",
+      "SourceId": "Store",
+      "SourceType": "Discovered",
+      "ContentRoot": "E:\\Windows\\Underway\\Project\\Store\\Store\\wwwroot\\",
+      "BasePath": "_content/Store",
+      "RelativePath": "ProductsImages/d205360a-b036-4252-8b11-9d76670924a7.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\ProductsImages\\d205360a-b036-4252-8b11-9d76670924a7.jpg"
+    },
+    {
+      "Identity": "E:\\Windows\\Underway\\Project\\Store\\Store\\wwwroot\\ProductsImages\\f1b33c86-b6b5-4a62-89a1-9928d7a235cf.jpg",
+      "SourceId": "Store",
+      "SourceType": "Discovered",
+      "ContentRoot": "E:\\Windows\\Underway\\Project\\Store\\Store\\wwwroot\\",
+      "BasePath": "_content/Store",
+      "RelativePath": "ProductsImages/f1b33c86-b6b5-4a62-89a1-9928d7a235cf.jpg",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\ProductsImages\\f1b33c86-b6b5-4a62-89a1-9928d7a235cf.jpg"
+    }
+  ]
+}
