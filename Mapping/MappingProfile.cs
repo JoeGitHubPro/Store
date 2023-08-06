@@ -16,6 +16,9 @@ namespace Store.Mapping
             CreateMap<Review, ReviewDTO>()
                .ReverseMap();
 
+            CreateMap<Favorite, FavoriteDTO>()
+               .ReverseMap();
+
         }
     }
 }
