@@ -19,18 +19,17 @@ namespace Store.Controllers
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
-        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ProductsController(AppDbContext context, IMapper mapper , IWebHostEnvironment webHostEnvironment)
+        public ProductsController(AppDbContext context, IMapper mapper )
         {
             _context = context;
             _mapper = mapper;
-            _webHostEnvironment = webHostEnvironment;
+           
         }
 
         // GET: api/Products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProducts()
         {
             if (_context.Products == null)
             {
@@ -44,7 +43,7 @@ namespace Store.Controllers
 
         // GET: api/Products/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        public async Task<ActionResult<ProductDTO>> GetProduct(int id)
         {
             if (_context.Products == null)
             {

@@ -1,12 +1,12 @@
 {
   "Files": [
     {
-      "Id": "E:\\Windows\\Underway\\Project\\Store\\Store\\wwwroot\\ProductsImages\\d205360a-b036-4252-8b11-9d76670924a7.jpg",
-      "PackagePath": "staticwebassets\\ProductsImages\\d205360a-b036-4252-8b11-9d76670924a7.jpg"
+      "Id": "E:\\Windows\\Underway\\Project\\Store\\Store\\wwwroot\\ProductsImages\\be9f0984-491d-47d8-8b6e-f54ea2b4c0e3.jpg",
+      "PackagePath": "staticwebassets\\ProductsImages\\be9f0984-491d-47d8-8b6e-f54ea2b4c0e3.jpg"
     },
     {
-      "Id": "E:\\Windows\\Underway\\Project\\Store\\Store\\wwwroot\\ProductsImages\\f1b33c86-b6b5-4a62-89a1-9928d7a235cf.jpg",
-      "PackagePath": "staticwebassets\\ProductsImages\\f1b33c86-b6b5-4a62-89a1-9928d7a235cf.jpg"
+      "Id": "E:\\Windows\\Underway\\Project\\Store\\Store\\wwwroot\\ProductsImages\\d205360a-b036-4252-8b11-9d76670924a7.jpg",
+      "PackagePath": "staticwebassets\\ProductsImages\\d205360a-b036-4252-8b11-9d76670924a7.jpg"
     },
     {
       "Id": "obj\\Debug\\net7.0\\staticwebassets\\msbuild.Store.Microsoft.AspNetCore.StaticWebAssets.props",

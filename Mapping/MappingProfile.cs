@@ -12,6 +12,10 @@ namespace Store.Mapping
 
             CreateMap<Product, ProductDTO>()
                 .ReverseMap();
+
+            CreateMap<Review, ReviewDTO>()
+               .ReverseMap();
+
         }
     }
 }
