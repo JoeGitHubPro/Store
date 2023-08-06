@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Store.Data;
+using Store.DOTs;
 using Store.Entities;
 
 namespace Store.Controllers
@@ -20,15 +21,15 @@ namespace Store.Controllers
         }
 
         // GET: api/FavoriteCollections/GetUserFavorites
-        [HttpGet("GetUserFavorites/{userId}")]
-        public async Task<ActionResult<IEnumerable<FavoriteDTO>>> GetUserFavorites(string userId)
+        [HttpGet("GetUserFavorites")]
+        public async Task<ActionResult<IEnumerable<FavoriteDTO>>> GetUserFavorites(UserDTO userDTO)
         {
             if (_context.Favorites == null)
             {
                 return NotFound();
             }
 
-            IEnumerable<Favorite> source = await _context.Favorites.Where(favorite=> favorite.UserId == userId).ToListAsync();
+            IEnumerable<Favorite> source = await _context.Favorites.Where(favorite=> favorite.UserId == userDTO.UserId).ToListAsync();
             IEnumerable<FavoriteDTO> result = _mapper.Map<IEnumerable<FavoriteDTO>>(source);
 
             return Ok(result);

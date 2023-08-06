@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -15,50 +16,59 @@ namespace Store.Controllers
     public class CartsController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly IMapper _mapper;
 
-        public CartsController(AppDbContext context)
+        public CartsController(AppDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
         // GET: api/Carts
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Cart>>> GetCarts()
+        public async Task<ActionResult<IEnumerable<CartDTO>>> GetCarts()
         {
           if (_context.Carts == null)
           {
               return NotFound();
           }
-            return await _context.Carts.ToListAsync();
+            IEnumerable<Cart> source = await _context.Carts.ToListAsync();
+            IEnumerable<CartDTO> result = _mapper.Map<IEnumerable<CartDTO>>(source);
+
+            return Ok(result);
         }
 
         // GET: api/Carts/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Cart>> GetCart(int id)
+        public async Task<ActionResult<CartDTO>> GetCart(int id)
         {
           if (_context.Carts == null)
           {
               return NotFound();
           }
-            var cart = await _context.Carts.FindAsync(id);
+         
+            Cart? cart = await _context.Carts.FindAsync(id);
 
             if (cart == null)
             {
                 return NotFound();
             }
+            CartDTO result = _mapper.Map<CartDTO>(cart);
 
-            return cart;
+            return result;
         }
 
         // PUT: api/Carts/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutCart(int id, Cart cart)
+        public async Task<IActionResult> PutCart(int id, CartDTO cartDTO)
         {
-            if (id != cart.Id)
+            if (id != cartDTO.Id)
             {
                 return BadRequest();
             }
+
+            Cart cart = _mapper.Map<Cart>(cartDTO);
 
             _context.Entry(cart).State = EntityState.Modified;
 
@@ -84,16 +94,18 @@ namespace Store.Controllers
         // POST: api/Carts
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Cart>> PostCart(Cart cart)
+        public async Task<ActionResult<CartDTO>> PostCart(CartDTO cartDTO)
         {
           if (_context.Carts == null)
           {
               return Problem("Entity set 'AppDbContext.Carts'  is null.");
           }
+            Cart cart = _mapper.Map<Cart>(cartDTO);
+
             _context.Carts.Add(cart);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCart", new { id = cart.Id }, cart);
+            return CreatedAtAction("GetCart", new { id = cart.Id }, _mapper.Map<CartDTO>(cart));
         }
 
         // DELETE: api/Carts/5

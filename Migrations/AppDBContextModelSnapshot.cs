@@ -155,6 +155,178 @@ namespace Store.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("Store.Entities.Cart", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("ID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("Count")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1);
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("int")
+                        .HasColumnName("ProductID");
+
+                    b.Property<string>("UserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("UserID");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Cart", (string)null);
+                });
+
+            modelBuilder.Entity("Store.Entities.Favorite", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("ID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("int")
+                        .HasColumnName("ProductID");
+
+                    b.Property<string>("UserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("UserID");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Favorite", (string)null);
+                });
+
+            modelBuilder.Entity("Store.Entities.Order", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("ID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("Count")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("DeliveryDate")
+                        .HasColumnType("date");
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("int")
+                        .HasColumnName("ProductID");
+
+                    b.Property<string>("UserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("UserID");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Order", (string)null);
+                });
+
+            modelBuilder.Entity("Store.Entities.Product", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("ID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("int")
+                        .HasColumnName("CategoryID");
+
+                    b.Property<int?>("DeliveryTime")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Image")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("Price")
+                        .HasColumnType("float");
+
+                    b.Property<string>("ProductDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProductName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CategoryId");
+
+                    b.ToTable("Product", (string)null);
+                });
+
+            modelBuilder.Entity("Store.Entities.ProductCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("ID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Category")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ProductCategory", (string)null);
+                });
+
+            modelBuilder.Entity("Store.Entities.Review", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasColumnName("ID");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("int")
+                        .HasColumnName("ProductID");
+
+                    b.Property<string>("ReviewDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("ReviewStars")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnName("UserID");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("Review", (string)null);
+                });
+
             modelBuilder.Entity("Store.Identity.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
@@ -281,6 +453,61 @@ namespace Store.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Store.Entities.Cart", b =>
+                {
+                    b.HasOne("Store.Entities.Product", "Product")
+                        .WithMany("Carts")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("FK_Cart_Product");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Store.Entities.Favorite", b =>
+                {
+                    b.HasOne("Store.Entities.Product", "Product")
+                        .WithMany("Favorites")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("FK_Favorite_Product");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Store.Entities.Order", b =>
+                {
+                    b.HasOne("Store.Entities.Product", "Product")
+                        .WithMany("Orders")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("FK_Order_Product");
+
+                    b.Navigation("Product");
+                });
+
+            modelBuilder.Entity("Store.Entities.Product", b =>
+                {
+                    b.HasOne("Store.Entities.ProductCategory", "Category")
+                        .WithMany("Products")
+                        .HasForeignKey("CategoryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("FK_Product_ProductCategory");
+
+                    b.Navigation("Category");
+                });
+
+            modelBuilder.Entity("Store.Entities.Review", b =>
+                {
+                    b.HasOne("Store.Entities.Product", "Product")
+                        .WithMany("Reviews")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .HasConstraintName("FK_Review_Product");
+
+                    b.Navigation("Product");
+                });
+
             modelBuilder.Entity("Store.Identity.Models.ApplicationUser", b =>
                 {
                     b.OwnsMany("Store.Identity.Models.RefreshToken", "RefreshTokens", b1 =>
@@ -316,6 +543,22 @@ namespace Store.Migrations
                         });
 
                     b.Navigation("RefreshTokens");
+                });
+
+            modelBuilder.Entity("Store.Entities.Product", b =>
+                {
+                    b.Navigation("Carts");
+
+                    b.Navigation("Favorites");
+
+                    b.Navigation("Orders");
+
+                    b.Navigation("Reviews");
+                });
+
+            modelBuilder.Entity("Store.Entities.ProductCategory", b =>
+                {
+                    b.Navigation("Products");
                 });
 #pragma warning restore 612, 618
         }

@@ -47,6 +47,9 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
                 .HasForeignKey(d => d.ProductId)
                 .OnDelete(DeleteBehavior.Cascade)
                 .HasConstraintName("FK_Cart_Product");
+
+            entity.Property(c => c.Count)
+            .HasDefaultValue(1);
         });
 
         modelBuilder.Entity<Favorite>(entity =>
