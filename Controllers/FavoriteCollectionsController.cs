@@ -29,7 +29,7 @@ namespace Store.Controllers
                 return NotFound();
             }
 
-            IEnumerable<Favorite> source = await _context.Favorites.Where(favorite=> favorite.UserId == userDTO.UserId).ToListAsync();
+            IEnumerable<Favorite> source = await _context.Favorites.AsNoTracking().Where(favorite=> favorite.UserId == userDTO.UserId).ToListAsync();
             IEnumerable<FavoriteDTO> result = _mapper.Map<IEnumerable<FavoriteDTO>>(source);
 
             return Ok(result);

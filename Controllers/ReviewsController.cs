@@ -32,7 +32,7 @@ namespace Store.Controllers
             {
                 return NotFound();
             }
-            IEnumerable<Review> source = await _context.Reviews.ToListAsync();
+            IEnumerable<Review> source = await _context.Reviews.AsNoTracking().ToListAsync();
             IEnumerable<ReviewDTO> result = _mapper.Map<IEnumerable<ReviewDTO>>(source);
 
             return Ok(result);

@@ -33,7 +33,7 @@ namespace Store.Controllers
                 return NotFound();
             }
 
-            IEnumerable<Favorite> source = await _context.Favorites.ToListAsync();
+            IEnumerable<Favorite> source = await _context.Favorites.AsNoTracking().ToListAsync();
             IEnumerable<FavoriteDTO> result = _mapper.Map<IEnumerable<FavoriteDTO>>(source);
 
             return Ok(result);

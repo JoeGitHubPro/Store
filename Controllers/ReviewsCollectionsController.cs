@@ -28,7 +28,7 @@ namespace Store.Controllers
             {
                 return NotFound();
             }
-            IEnumerable<Review> source = await _context.Reviews.Where(Reviews => Reviews.ProductId == productId).ToListAsync();
+            IEnumerable<Review> source = await _context.Reviews.AsNoTracking().Where(Reviews => Reviews.ProductId == productId).ToListAsync();
 
             IEnumerable<ReviewDTO> result = _mapper.Map<IEnumerable<ReviewDTO>>(source);
 

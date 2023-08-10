@@ -1,10 +1,13 @@
 E:\Windows\Underway\Project\Store\Store\bin\Debug\net7.0\appsettings.Development.json
 E:\Windows\Underway\Project\Store\Store\bin\Debug\net7.0\appsettings.json
+E:\Windows\Underway\Project\Store\Store\bin\Debug\net7.0\Store.staticwebassets.runtime.json
 E:\Windows\Underway\Project\Store\Store\bin\Debug\net7.0\Store.exe
 E:\Windows\Underway\Project\Store\Store\bin\Debug\net7.0\Store.deps.json
 E:\Windows\Underway\Project\Store\Store\bin\Debug\net7.0\Store.runtimeconfig.json
 E:\Windows\Underway\Project\Store\Store\bin\Debug\net7.0\Store.dll
 E:\Windows\Underway\Project\Store\Store\bin\Debug\net7.0\Store.pdb
+E:\Windows\Underway\Project\Store\Store\bin\Debug\net7.0\AutoMapper.dll
+E:\Windows\Underway\Project\Store\Store\bin\Debug\net7.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
 E:\Windows\Underway\Project\Store\Store\bin\Debug\net7.0\Azure.Core.dll
 E:\Windows\Underway\Project\Store\Store\bin\Debug\net7.0\Azure.Identity.dll
 E:\Windows\Underway\Project\Store\Store\bin\Debug\net7.0\Humanizer.dll
@@ -259,6 +262,3 @@ E:\Windows\Underway\Project\Store\Store\obj\Debug\net7.0\refint\Store.dll
 E:\Windows\Underway\Project\Store\Store\obj\Debug\net7.0\Store.pdb
 E:\Windows\Underway\Project\Store\Store\obj\Debug\net7.0\Store.genruntimeconfig.cache
 E:\Windows\Underway\Project\Store\Store\obj\Debug\net7.0\ref\Store.dll
-E:\Windows\Underway\Project\Store\Store\bin\Debug\net7.0\AutoMapper.dll
-E:\Windows\Underway\Project\Store\Store\bin\Debug\net7.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
-E:\Windows\Underway\Project\Store\Store\bin\Debug\net7.0\Store.staticwebassets.runtime.json

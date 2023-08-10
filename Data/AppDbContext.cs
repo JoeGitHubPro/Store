@@ -17,6 +17,9 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
     {
     }
 
+    // DbSet for the SQL view
+    public virtual DbSet<OrderView> OrderView { get; set; }
+
     public virtual DbSet<Cart> Carts { get; set; }
 
     public virtual DbSet<Favorite> Favorites { get; set; }
@@ -32,6 +35,11 @@ public partial class AppDbContext : IdentityDbContext<ApplicationUser>
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<OrderView>(entity =>
+        {
+            entity.ToView("OrderView"); // Specify the name of the SQL view
+        });
 
         modelBuilder.Entity<Cart>(entity =>
         {

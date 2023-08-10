@@ -29,7 +29,7 @@ namespace Store.Controllers
             {
                 return NotFound();
             }
-            IEnumerable<Product> source = await _context.Products.Where(Products => Products.CategoryId == productCategoryId).ToListAsync();
+            IEnumerable<Product> source = await _context.Products.AsNoTracking().Where(Products => Products.CategoryId == productCategoryId).ToListAsync();
             IEnumerable<ProductDTO> result = _mapper.Map<IEnumerable<ProductDTO>>(source);
 
             return Ok(result);

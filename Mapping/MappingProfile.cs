@@ -30,6 +30,16 @@ namespace Store.Mapping
             
             CreateMap<Order, OrderDTO>()
                .ReverseMap();
+            
+            CreateMap<OrderView, OrderViewDTO>()
+               .ReverseMap();
+            
+            //CreateMap<Order, OrderViewDTO>()
+            //   .ReverseMap();  
+            
+            CreateMap<CartDTO, OrderDTO>()
+                .ForMember(dest => dest.Id, opt => opt.Ignore())
+               .ReverseMap();
         }
     }
 }

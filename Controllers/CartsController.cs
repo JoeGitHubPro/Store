@@ -32,7 +32,7 @@ namespace Store.Controllers
           {
               return NotFound();
           }
-            IEnumerable<Cart> source = await _context.Carts.ToListAsync();
+            IEnumerable<Cart> source = await _context.Carts.AsNoTracking().ToListAsync();
             IEnumerable<CartDTO> result = _mapper.Map<IEnumerable<CartDTO>>(source);
 
             return Ok(result);

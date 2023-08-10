@@ -17,4 +17,6 @@ public  class OrderDTO
 
     public int? Count { get; set; }
 
+    public double? TotalPrice { get; set; }
+
 }

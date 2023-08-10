@@ -28,7 +28,7 @@ namespace Store.Controllers
             {
                 return NotFound();
             }
-            IEnumerable<Cart> source = await _context.Carts.Where(cart=>cart.UserId == userDTO.UserId).ToListAsync();
+            IEnumerable<Cart> source = await _context.Carts.AsNoTracking().Where(cart=>cart.UserId == userDTO.UserId).ToListAsync();
             IEnumerable<CartDTO> result = _mapper.Map<IEnumerable<CartDTO>>(source);
 
             return Ok(result);

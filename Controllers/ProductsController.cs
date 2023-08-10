@@ -20,11 +20,10 @@ namespace Store.Controllers
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
 
-        public ProductsController(AppDbContext context, IMapper mapper )
+        public ProductsController(AppDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
-           
         }
 
         // GET: api/Products
@@ -35,7 +34,7 @@ namespace Store.Controllers
             {
                 return NotFound();
             }
-            IEnumerable<Product> source = await _context.Products.ToListAsync();
+            IEnumerable<Product> source = await _context.Products.AsNoTracking().ToListAsync();
             IEnumerable<ProductDTO> result = _mapper.Map<IEnumerable<ProductDTO>>(source);
 
             return Ok(result);
@@ -64,7 +63,7 @@ namespace Store.Controllers
         // PUT: api/Products/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutProduct(int id, [FromForm]ProductDTO productDTO, [FromForm] IFormFile? image)
+        public async Task<IActionResult> PutProduct(int id, [FromForm] ProductDTO productDTO, [FromForm] IFormFile? image)
         {
             if (id != productDTO.Id)
             {
@@ -75,8 +74,7 @@ namespace Store.Controllers
 
             if (image is not null)
             {
-
-                Product? dataProduct =  _context.Products.Where(x=>x.Id == id).AsNoTracking().FirstOrDefault();
+                Product? dataProduct = _context.Products.Where(x => x.Id == id).AsNoTracking().FirstOrDefault();
                 await FileUpload.Delete(dataProduct.Image!);
                 product.Image = await FileUpload.Upload(image);
             }
@@ -107,9 +105,9 @@ namespace Store.Controllers
         // POST: api/Products
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<ProductDTO>> PostProduct([FromForm]IFormFile image,[FromForm] ProductDTO productDTO)
+        public async Task<ActionResult<ProductDTO>> PostProduct([FromForm] IFormFile image, [FromForm] ProductDTO productDTO)
         {
-          
+
             if (_context.Products == null)
             {
                 return Problem("Entity set 'AppDbContext.Products'  is null.");
