@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Store.Data;
-using Store.DOTs;
-using Store.Entities;
+using Store.Core.UnitWork;
+using Store.EF.Data;
+using Store.Core.DOTs;
+using Store.Core.Entities;
 
 namespace Store.Controllers
 {
@@ -11,12 +12,12 @@ namespace Store.Controllers
     [ApiController]
     public class CartsCollectionsController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public CartsCollectionsController(AppDbContext context, IMapper mapper)
+        public CartsCollectionsController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -24,11 +25,11 @@ namespace Store.Controllers
         [HttpGet("GetUserCartItems")]
         public async Task<ActionResult<IEnumerable<CartDTO>>> GetUserCartItems(UserDTO userDTO)
         {
-            if (_context.Carts == null)
-            {
+            if (_unitOfWork.Carts == null)
                 return NotFound();
-            }
-            IEnumerable<Cart> source = await _context.Carts.AsNoTracking().Where(cart=>cart.UserId == userDTO.UserId).ToListAsync();
+
+            IEnumerable<Cart> source = await _unitOfWork.Carts.Get(cart => cart.UserId == userDTO.UserId);
+
             IEnumerable<CartDTO> result = _mapper.Map<IEnumerable<CartDTO>>(source);
 
             return Ok(result);

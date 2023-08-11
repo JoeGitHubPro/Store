@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Store.Data;
-using Store.DOTs;
-using Store.Entities;
+using Store.Core.UnitWork;
+using Store.EF.Data;
+using Store.Core.DOTs;
+using Store.Core.Entities;
 
 namespace Store.Controllers
 {
@@ -12,12 +13,12 @@ namespace Store.Controllers
     public class OrdersCollectionsController : ControllerBase
     {
 
-        private readonly AppDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public OrdersCollectionsController(AppDbContext context, IMapper mapper)
+        public OrdersCollectionsController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
 
         }
@@ -27,12 +28,11 @@ namespace Store.Controllers
         [HttpGet("GetUserOrders")]
         public async Task<ActionResult<IEnumerable<OrderViewDTO>>> GetOrders(UserDTO userDTO)
         {
-            if (_context.OrderView == null)
-            {
-                return NotFound();
-            }
+            if (_unitOfWork.OrderView is null)
+                           return NotFound();
+            
 
-            IEnumerable<OrderView> source = await _context.OrderView.AsNoTracking().Where(a=>a.UserName == userDTO.UserName).ToListAsync();
+            IEnumerable<OrderView> source = await _unitOfWork.OrderView.Get(a=>a.UserName == userDTO.UserName);
            
             
             IEnumerable<OrderViewDTO> result = _mapper.Map<IEnumerable<OrderViewDTO>>(source);

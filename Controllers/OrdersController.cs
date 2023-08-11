@@ -6,10 +6,11 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Store.Data;
-using Store.Entities;
-using Store.DOTs;
+using Store.EF.Data;
+using Store.Core.Entities;
+using Store.Core.DOTs;
 using Elfie.Serialization;
+using Store.Core.UnitWork;
 
 namespace Store.Controllers
 {
@@ -17,12 +18,12 @@ namespace Store.Controllers
     [ApiController]
     public class OrdersController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public OrdersController(AppDbContext context, IMapper mapper)
+        public OrdersController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -30,13 +31,13 @@ namespace Store.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OrderViewDTO>>> GetOrders()
         {
-            if (_context.OrderView == null)
-            {
+            if (_unitOfWork.OrderView is null)
                 return NotFound();
-            }
 
-            IEnumerable<OrderView> source = await _context.OrderView.AsNoTracking().ToListAsync();
-            IEnumerable<OrderViewDTO> result = _mapper.Map<IEnumerable<OrderViewDTO>>(source);
+            IEnumerable<OrderViewDTO> result =
+                _mapper.Map<IEnumerable<OrderViewDTO>>(
+                    await _unitOfWork.OrderView.Get()
+                    );
 
             return Ok(result);
         }
@@ -45,16 +46,15 @@ namespace Store.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<OrderViewDTO>> GetOrder(int id)
         {
-            if (_context.Orders == null)
-            {
+            if (_unitOfWork.Orders is null)
                 return NotFound();
-            }
-            OrderView? order = await _context.OrderView.FindAsync(id);
-            if (order == null)
-            {
+
+            OrderView? order = await _unitOfWork.OrderView.Get(id);
+            if (order is null)
                 return NotFound();
-            }
+
             OrderViewDTO result = _mapper.Map<OrderViewDTO>(order);
+
             return result;
         }
 
@@ -63,30 +63,14 @@ namespace Store.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutOrder(int id, OrderDTO orderDTO)
         {
-
             if (id != orderDTO.Id)
                 return BadRequest();
 
             Order? order = _mapper.Map<Order>(orderDTO);
 
+            await _unitOfWork.Orders.Put(id,order);
 
-            _context.Entry(order).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!OrderExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _unitOfWork.Commit();
 
             return NoContent();
         }
@@ -96,45 +80,33 @@ namespace Store.Controllers
         [HttpPost]
         public async Task<IActionResult> PostOrder(OrderDTO orderDTO)
         {
-            if (_context.Orders == null || _context.Carts == null || _context.Products == null)
+            if (_unitOfWork.Orders == null || _unitOfWork.Carts == null || _unitOfWork.Products == null)
             {
                 return Problem("Entity set 'AppDbContext'  is null.");
             }
 
             Order order = _mapper.Map<Order>(orderDTO);
 
-            IEnumerable<Cart> cartsSource = await _context.Carts.Where(cart => cart.UserId == order.UserId).ToListAsync();
-            IEnumerable<CartDTO> carts = _mapper.Map<IEnumerable<CartDTO>>(cartsSource);
-            IEnumerable<OrderDTO> orders = _mapper.Map<IEnumerable<OrderDTO>>(carts);
+            IEnumerable<Cart> cartsSource = await _unitOfWork.Carts.Get(cart => cart.UserId == order.UserId);
+
+            IEnumerable<OrderDTO> orders = _mapper.Map<IEnumerable<OrderDTO>>(_mapper.Map<IEnumerable<CartDTO>>(cartsSource));
 
             foreach (var item in orders)
             {
                 item.Address = orderDTO.Address;
-                Product? product = await _context.Products.AsNoTracking().Where(a => a.Id == item.ProductId).FirstOrDefaultAsync();
+                Product? product = await _unitOfWork.Products.GetSingle(a => a.Id == item.ProductId);
                 int? DeliveryTime = product?.DeliveryTime;
 
                 if (DeliveryTime is not null)
-                {
-
                     item.DeliveryDate = DateTime.UtcNow.AddDays(Convert.ToDouble(DeliveryTime));
-                }
-
+                
                 item.TotalPrice = product.Price * item.Count;
             }
 
             IEnumerable<Order> result = _mapper.Map<IEnumerable<Order>>(orders);
 
-            try
-            {
-                await _context.Orders.AddRangeAsync(result);
-                _context.Carts.RemoveRange(cartsSource);
+            await _unitOfWork.Commit();
 
-                await _context.SaveChangesAsync();
-            }
-            catch (Exception e)
-            {
-                return BadRequest(e);
-            }
             return Ok();
 
             //return CreatedAtAction("GetOrder",, new { id = order.Id }, _mapper.Map < IEnumerable<OrderViewDTO>>(result));
@@ -144,25 +116,22 @@ namespace Store.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOrder(int id)
         {
-            if (_context.Orders == null)
-            {
-                return NotFound();
-            }
-            var order = await _context.Orders.FindAsync(id);
-            if (order == null)
-            {
-                return NotFound();
-            }
+            if (_unitOfWork.Orders is null)
+                           return NotFound();
+            
+            Order? order = await _unitOfWork.Orders.Delete(id);
 
-            _context.Orders.Remove(order);
-            await _context.SaveChangesAsync();
+            if (order is null)
+                            return NotFound();
+
+            await _unitOfWork.Commit();
 
             return NoContent();
         }
 
-        private bool OrderExists(int id)
-        {
-            return (_context.Orders?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
+        //private bool OrderExists(int id)
+        //{
+        //    return (_unitOfWork.Orders?.Any(e => e.Id == id)).GetValueOrDefault();
+        //}
     }
 }

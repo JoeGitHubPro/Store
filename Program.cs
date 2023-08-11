@@ -2,12 +2,16 @@
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using Store.Identity.Confg;
-using Store.Identity.Models;
-using Store.Identity.Services;
+using Store.Core.Identity.Confg;
+using Store.Core.Identity.Models;
+using Store.Core.Identity.Services;
 using System.Text;
 using System;
-using Store.Data;
+using Store.EF.Data;
+using Store.Core.UnitWork;
+using Store.EF.UnitWork;
+using Store.Identity.Services;
+using Store.Core.Const;
 
 namespace Store
 {
@@ -34,11 +38,22 @@ namespace Store
             //AutoMapper
             builder.Services.AddAutoMapper(typeof(Program));
 
-           
 
-           //SqlServer provider & DefaultConnection
-           builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            //SqlServer provider & DefaultConnection
+            //builder.Services.AddDbContext<AppDbContext>(options =>
+            //options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            //Repository pattern settings
+
+            builder.Services.AddDbContext<AppDbContext>(options =>
+            options.UseSqlServer(
+                builder.Configuration.GetConnectionString("DefaultConnection"),
+                   p => p.MigrationsAssembly(typeof(AppDbContext).Assembly.FullName))
+             );
+
+            builder.Services.AddTransient<IUnitOfWork, UnitOfWork>();
+
 
             #region Identity
             // Put it before var app = builder.Build();
@@ -92,6 +107,17 @@ namespace Store
             }
 
             app.UseHttpsRedirection();
+
+            // Create database and create roles
+            using (var scope = app.Services.CreateScope())
+            {
+                var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+                context.Database.MigrateAsync().Wait();
+
+                DefulteRoles.InitializeRoles(context).Wait();
+            }
+
 
             // Add Authentication
             app.UseAuthentication(); // Put it before app.UseAuthorization() and after var app = builder.Build();

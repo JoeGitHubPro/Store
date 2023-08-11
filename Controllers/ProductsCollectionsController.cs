@@ -1,8 +1,9 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Store.Data;
-using Store.Entities;
+using Store.EF.Data;
+using Store.Core.Entities;
+using Store.Core.UnitWork;
 
 namespace Store.Controllers
 {
@@ -10,12 +11,12 @@ namespace Store.Controllers
     [ApiController]
     public class ProductsCollectionsController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public ProductsCollectionsController(AppDbContext context, IMapper mapper)
+        public ProductsCollectionsController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
 
         }
@@ -25,11 +26,11 @@ namespace Store.Controllers
         [HttpGet("GetCategoryProducts/{productCategoryId}")]
         public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProducts(int productCategoryId)
         {
-            if (_context.Products == null)
-            {
+            if (_unitOfWork.Products == null)
                 return NotFound();
-            }
-            IEnumerable<Product> source = await _context.Products.AsNoTracking().Where(Products => Products.CategoryId == productCategoryId).ToListAsync();
+
+            IEnumerable<Product> source = await _unitOfWork.Products.Get(Products => Products.CategoryId == productCategoryId);
+
             IEnumerable<ProductDTO> result = _mapper.Map<IEnumerable<ProductDTO>>(source);
 
             return Ok(result);

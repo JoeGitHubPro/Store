@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Store.Data;
-using Store.Entities;
+using Store.EF.Data;
+using Store.Core.Entities;
 using System.Linq;
+using Store.Core.UnitWork;
 
 namespace Store.Controllers
 {
@@ -11,11 +12,11 @@ namespace Store.Controllers
     [ApiController]
     public class ReviewsCollectionsController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
-        public ReviewsCollectionsController(AppDbContext context, IMapper mapper)
+        public ReviewsCollectionsController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
 
         }
@@ -24,12 +25,11 @@ namespace Store.Controllers
         [HttpGet("GetProductReviews/{productId}")]
         public async Task<ActionResult<IEnumerable<ReviewDTO>>> GetProductReviews(int productId)
         {
-            if (_context.Reviews == null)
+            if (_unitOfWork.Reviews == null)
             {
                 return NotFound();
             }
-            IEnumerable<Review> source = await _context.Reviews.AsNoTracking().Where(Reviews => Reviews.ProductId == productId).ToListAsync();
-
+            IEnumerable<Review> source = await _unitOfWork.Reviews.Get(Reviews => Reviews.ProductId == productId);
             IEnumerable<ReviewDTO> result = _mapper.Map<IEnumerable<ReviewDTO>>(source);
 
             return Ok(result);

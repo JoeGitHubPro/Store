@@ -6,8 +6,9 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Store.Data;
-using Store.Entities;
+using Store.Core.UnitWork;
+using Store.EF.Data;
+using Store.Core.Entities;
 
 namespace Store.Controllers
 {
@@ -15,12 +16,12 @@ namespace Store.Controllers
     [ApiController]
     public class FavoritesController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public FavoritesController(AppDbContext context, IMapper mapper)
+        public FavoritesController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -28,13 +29,10 @@ namespace Store.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FavoriteDTO>>> GetFavorites()
         {
-            if (_context.Favorites == null)
-            {
+            if (_unitOfWork.Favorites == null)
                 return NotFound();
-            }
 
-            IEnumerable<Favorite> source = await _context.Favorites.AsNoTracking().ToListAsync();
-            IEnumerable<FavoriteDTO> result = _mapper.Map<IEnumerable<FavoriteDTO>>(source);
+            IEnumerable<FavoriteDTO> result = _mapper.Map<IEnumerable<FavoriteDTO>>(await _unitOfWork.Favorites.Get());
 
             return Ok(result);
         }
@@ -43,17 +41,15 @@ namespace Store.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<FavoriteDTO>> GetFavorite(int id)
         {
-            if (_context.Favorites == null)
-            {
+            if (_unitOfWork.Favorites == null)
                 return NotFound();
-            }
 
-            Favorite? favorite = await _context.Favorites.FindAsync(id);
+
+            Favorite? favorite = await _unitOfWork.Favorites.Get(id);
 
             if (favorite == null)
-            {
                 return NotFound();
-            }
+
 
             FavoriteDTO result = _mapper.Map<FavoriteDTO>(favorite);
 
@@ -65,29 +61,15 @@ namespace Store.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutFavorite(int id, FavoriteDTO favoriteDTO)
         {
-            
-            if (id != favoriteDTO.Id)
-            {
-                return BadRequest();
-            }
-            Favorite favorite = _mapper.Map<Favorite>(favoriteDTO);
-            _context.Entry(favorite).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!FavoriteExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            if (id != favoriteDTO.Id)
+                return BadRequest();
+
+            Favorite favorite = _mapper.Map<Favorite>(favoriteDTO);
+
+            await _unitOfWork.Favorites.Put(id, favorite);
+
+            await _unitOfWork.Commit();
 
             return NoContent();
         }
@@ -97,15 +79,15 @@ namespace Store.Controllers
         [HttpPost]
         public async Task<ActionResult<FavoriteDTO>> PostFavorite(FavoriteDTO favoriteDTO)
         {
-            if (_context.Favorites == null)
-            {
+            if (_unitOfWork.Favorites == null)
                 return Problem("Entity set 'AppDbContext.Favorites'  is null.");
-            }
+
 
             Favorite favorite = _mapper.Map<Favorite>(favoriteDTO);
 
-            _context.Favorites.Add(favorite);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.Favorites.Post(favorite);
+
+            await _unitOfWork.Commit();
 
             return CreatedAtAction("GetFavorite", new { id = favorite.Id }, _mapper.Map<FavoriteDTO>(favorite));
         }
@@ -114,25 +96,19 @@ namespace Store.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFavorite(int id)
         {
-            if (_context.Favorites == null)
-            {
+            if (_unitOfWork.Favorites == null)
                 return NotFound();
-            }
-            var favorite = await _context.Favorites.FindAsync(id);
-            if (favorite == null)
-            {
-                return NotFound();
-            }
 
-            _context.Favorites.Remove(favorite);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.Favorites.Delete(id);
+
+            await _unitOfWork.Commit();
 
             return NoContent();
         }
 
-        private bool FavoriteExists(int id)
-        {
-            return (_context.Favorites?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
+        //private bool FavoriteExists(int id)
+        //{
+        //    return (_unitOfWork.Favorites?.Any(e => e.Id == id)).GetValueOrDefault();
+        //}
     }
 }

@@ -7,8 +7,9 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Store.Data;
-using Store.Entities;
+using Store.Core.UnitWork;
+using Store.EF.Data;
+using Store.Core.Entities;
 using Store.Extensions;
 
 namespace Store.Controllers
@@ -17,12 +18,12 @@ namespace Store.Controllers
     [ApiController]
     public class ProductsController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public ProductsController(AppDbContext context, IMapper mapper)
+        public ProductsController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -30,12 +31,10 @@ namespace Store.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProducts()
         {
-            if (_context.Products == null)
-            {
+            if (_unitOfWork.Products == null)
                 return NotFound();
-            }
-            IEnumerable<Product> source = await _context.Products.AsNoTracking().ToListAsync();
-            IEnumerable<ProductDTO> result = _mapper.Map<IEnumerable<ProductDTO>>(source);
+
+            IEnumerable<ProductDTO> result = _mapper.Map<IEnumerable<ProductDTO>>(await _unitOfWork.Products.Get());
 
             return Ok(result);
         }
@@ -44,16 +43,14 @@ namespace Store.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductDTO>> GetProduct(int id)
         {
-            if (_context.Products == null)
-            {
+            if (_unitOfWork.Products == null)
+
                 return NotFound();
-            }
-            Product? product = await _context.Products.FindAsync(id);
+
+            Product? product = await _unitOfWork.Products.Get(id);
 
             if (product == null)
-            {
                 return NotFound();
-            }
 
             ProductDTO result = _mapper.Map<ProductDTO>(product);
 
@@ -66,38 +63,24 @@ namespace Store.Controllers
         public async Task<IActionResult> PutProduct(int id, [FromForm] ProductDTO productDTO, [FromForm] IFormFile? image)
         {
             if (id != productDTO.Id)
-            {
                 return BadRequest();
-            }
+
 
             Product product = _mapper.Map<Product>(productDTO);
 
             if (image is not null)
             {
-                Product? dataProduct = _context.Products.Where(x => x.Id == id).AsNoTracking().FirstOrDefault();
-                await FileUpload.Delete(dataProduct.Image!);
+                Product? dataProduct = await _unitOfWork.Products.Get(id);
+
+                if (dataProduct.Image is not null)
+                    await FileUpload.Delete(dataProduct.Image);
+
                 product.Image = await FileUpload.Upload(image);
             }
 
+            await _unitOfWork.Products.Put(id, product);
 
-
-            _context.Entry(product).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ProductExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _unitOfWork.Commit();
 
             return NoContent();
         }
@@ -107,25 +90,16 @@ namespace Store.Controllers
         [HttpPost]
         public async Task<ActionResult<ProductDTO>> PostProduct([FromForm] IFormFile image, [FromForm] ProductDTO productDTO)
         {
-
-            if (_context.Products == null)
-            {
+            if (_unitOfWork.Products == null)
                 return Problem("Entity set 'AppDbContext.Products'  is null.");
-            }
+
+
             Product product = _mapper.Map<Product>(productDTO);
 
-            try
-            {
-                product.Image = await FileUpload.Upload(image);
-            }
-            catch (Exception)
-            {
 
-                return BadRequest("Image upload fail");
-            }
+            await _unitOfWork.Products.Post(product, await FileUpload.Upload(image));
 
-            _context.Products.Add(product);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.Commit();
 
             return CreatedAtAction("GetProduct", new { id = product.Id }, _mapper.Map<ProductDTO>(product));
         }
@@ -134,28 +108,25 @@ namespace Store.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)
         {
-            if (_context.Products == null)
-            {
+            if (_unitOfWork.Products == null)
                 return NotFound();
-            }
-            var product = await _context.Products.FindAsync(id);
+
+            var product = await _unitOfWork.Products.Delete(id);
+
             if (product == null)
-            {
                 return NotFound();
-            }
+
 
             await FileUpload.Delete(product.Image!);
 
-            _context.Products.Remove(product);
-
-            await _context.SaveChangesAsync();
+            await _unitOfWork.Commit();
 
             return NoContent();
         }
 
-        private bool ProductExists(int id)
-        {
-            return (_context.Products?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
+        //private bool ProductExists(int id)
+        //{
+        //    return (_unitOfWork.Products?.Any(e => e.Id == id)).GetValueOrDefault();
+        //}
     }
 }

@@ -1,7 +1,7 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
-using Store.Identity.Models;
-using Store.Identity.Services;
+using Store.Core.Identity.Models;
+using Store.Core.Identity.Services;
 
 namespace Store.Controllers
 {

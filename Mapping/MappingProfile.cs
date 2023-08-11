@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using Store.DOTs;
-using Store.Entities;
-using Store.Identity.Models;
+using Store.Core.DOTs;
+using Store.Core.Entities;
+using Store.Core.Identity.Models;
 
-namespace Store.Mapping
+namespace Store.Core.Mapping
 {
     public class MappingProfile : Profile
     {

@@ -1,9 +1,10 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Store.Data;
-using Store.DOTs;
-using Store.Entities;
+using Store.EF.Data;
+using Store.Core.DOTs;
+using Store.Core.Entities;
+using Store.Core.UnitWork;
 
 namespace Store.Controllers
 {
@@ -11,12 +12,12 @@ namespace Store.Controllers
     [ApiController]
     public class FavoriteCollectionsController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public FavoriteCollectionsController(AppDbContext context, IMapper mapper)
+        public FavoriteCollectionsController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -24,12 +25,12 @@ namespace Store.Controllers
         [HttpGet("GetUserFavorites")]
         public async Task<ActionResult<IEnumerable<FavoriteDTO>>> GetUserFavorites(UserDTO userDTO)
         {
-            if (_context.Favorites == null)
-            {
+            if (_unitOfWork.Favorites == null)
                 return NotFound();
-            }
+            
 
-            IEnumerable<Favorite> source = await _context.Favorites.AsNoTracking().Where(favorite=> favorite.UserId == userDTO.UserId).ToListAsync();
+            IEnumerable<Favorite> source = await _unitOfWork.Favorites.Get(favorite=> favorite.UserId == userDTO.UserId);
+
             IEnumerable<FavoriteDTO> result = _mapper.Map<IEnumerable<FavoriteDTO>>(source);
 
             return Ok(result);

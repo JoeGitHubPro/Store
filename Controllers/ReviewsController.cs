@@ -6,8 +6,9 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Store.Data;
-using Store.Entities;
+using Store.EF.Data;
+using Store.Core.Entities;
+using Store.Core.UnitWork;
 
 namespace Store.Controllers
 {
@@ -15,12 +16,12 @@ namespace Store.Controllers
     [ApiController]
     public class ReviewsController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public ReviewsController(AppDbContext context, IMapper mapper)
+        public ReviewsController(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _context = context;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
 
@@ -28,12 +29,11 @@ namespace Store.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ReviewDTO>>> GetReviews()
         {
-            if (_context.Reviews == null)
-            {
+            if (_unitOfWork.Reviews is null)
                 return NotFound();
-            }
-            IEnumerable<Review> source = await _context.Reviews.AsNoTracking().ToListAsync();
-            IEnumerable<ReviewDTO> result = _mapper.Map<IEnumerable<ReviewDTO>>(source);
+
+
+            IEnumerable<ReviewDTO> result = _mapper.Map<IEnumerable<ReviewDTO>>(await _unitOfWork.Reviews.Get());
 
             return Ok(result);
         }
@@ -42,16 +42,14 @@ namespace Store.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ReviewDTO>> GetReview(int id)
         {
-            if (_context.Reviews == null)
-            {
+            if (_unitOfWork.Reviews is null)
                 return NotFound();
-            }
-            Review? review = await _context.Reviews.FindAsync(id);
 
-            if (review == null)
-            {
+            Review? review = await _unitOfWork.Reviews.Get(id);
+
+            if (review is null)
                 return NotFound();
-            }
+
 
             ReviewDTO result = _mapper.Map<ReviewDTO>(review);
 
@@ -64,28 +62,14 @@ namespace Store.Controllers
         public async Task<IActionResult> PutReview(int id, ReviewDTO reviewDTO)
         {
             if (id != reviewDTO.Id)
-            {
                 return BadRequest();
-            }
+
 
             Review review = _mapper.Map<Review>(reviewDTO);
-            _context.Entry(review).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ReviewExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _unitOfWork.Reviews.Put(id, review);
+
+            await _unitOfWork.Commit();
 
             return NoContent();
         }
@@ -95,14 +79,15 @@ namespace Store.Controllers
         [HttpPost]
         public async Task<ActionResult<ReviewDTO>> PostReview(ReviewDTO reviewDTO)
         {
-            if (_context.Reviews == null)
+            if (_unitOfWork.Reviews == null)
             {
                 return Problem("Entity set 'AppDbContext.Reviews'  is null.");
             }
 
             Review review = _mapper.Map<Review>(reviewDTO);
-            _context.Reviews.Add(review);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.Reviews.Post(review);
+
+            await _unitOfWork.Commit();
 
             return CreatedAtAction("GetReview", new { id = review.Id }, _mapper.Map<ReviewDTO>(review));
         }
@@ -111,25 +96,19 @@ namespace Store.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteReview(int id)
         {
-            if (_context.Reviews == null)
-            {
+            if (_unitOfWork.Reviews == null)
                 return NotFound();
-            }
-            var review = await _context.Reviews.FindAsync(id);
-            if (review == null)
-            {
-                return NotFound();
-            }
 
-            _context.Reviews.Remove(review);
-            await _context.SaveChangesAsync();
+            await _unitOfWork.Reviews.Delete(id);
+
+            await _unitOfWork.Commit();
 
             return NoContent();
         }
 
-        private bool ReviewExists(int id)
-        {
-            return (_context.Reviews?.Any(e => e.Id == id)).GetValueOrDefault();
-        }
+        //private bool ReviewExists(int id)
+        //{
+        //    return (_unitOfWork.Reviews?.Any(e => e.Id == id)).GetValueOrDefault();
+        //}
     }
 }
