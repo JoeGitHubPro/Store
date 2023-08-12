@@ -4,6 +4,8 @@ E:\Windows\Underway\Project\Store\Store\obj\Release\net7.0\PubTmp\Out\appsetting
 E:\Windows\Underway\Project\Store\Store\obj\Release\net7.0\PubTmp\Out\Store.dll
 E:\Windows\Underway\Project\Store\Store\obj\Release\net7.0\PubTmp\Out\Store.runtimeconfig.json
 E:\Windows\Underway\Project\Store\Store\obj\Release\net7.0\PubTmp\Out\Store.pdb
+E:\Windows\Underway\Project\Store\Store\obj\Release\net7.0\PubTmp\Out\AutoMapper.dll
+E:\Windows\Underway\Project\Store\Store\obj\Release\net7.0\PubTmp\Out\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
 E:\Windows\Underway\Project\Store\Store\obj\Release\net7.0\PubTmp\Out\Azure.Core.dll
 E:\Windows\Underway\Project\Store\Store\obj\Release\net7.0\PubTmp\Out\Azure.Identity.dll
 E:\Windows\Underway\Project\Store\Store\obj\Release\net7.0\PubTmp\Out\Humanizer.dll
@@ -33,6 +35,7 @@ E:\Windows\Underway\Project\Store\Store\obj\Release\net7.0\PubTmp\Out\Microsoft.
 E:\Windows\Underway\Project\Store\Store\obj\Release\net7.0\PubTmp\Out\Microsoft.EntityFrameworkCore.Abstractions.dll
 E:\Windows\Underway\Project\Store\Store\obj\Release\net7.0\PubTmp\Out\Microsoft.EntityFrameworkCore.Relational.dll
 E:\Windows\Underway\Project\Store\Store\obj\Release\net7.0\PubTmp\Out\Microsoft.EntityFrameworkCore.SqlServer.dll
+E:\Windows\Underway\Project\Store\Store\obj\Release\net7.0\PubTmp\Out\Microsoft.Extensions.DependencyModel.dll
 E:\Windows\Underway\Project\Store\Store\obj\Release\net7.0\PubTmp\Out\Microsoft.Extensions.Identity.Core.dll
 E:\Windows\Underway\Project\Store\Store\obj\Release\net7.0\PubTmp\Out\Microsoft.Extensions.Identity.Stores.dll
 E:\Windows\Underway\Project\Store\Store\obj\Release\net7.0\PubTmp\Out\Microsoft.Extensions.Options.dll
@@ -233,4 +236,8 @@ E:\Windows\Underway\Project\Store\Store\obj\Release\net7.0\PubTmp\Out\runtimes\w
 E:\Windows\Underway\Project\Store\Store\obj\Release\net7.0\PubTmp\Out\runtimes\win\lib\netstandard2.0\System.Runtime.Caching.dll
 E:\Windows\Underway\Project\Store\Store\obj\Release\net7.0\PubTmp\Out\runtimes\win\lib\net6.0\System.Security.Cryptography.ProtectedData.dll
 E:\Windows\Underway\Project\Store\Store\obj\Release\net7.0\PubTmp\Out\runtimes\win\lib\net6.0\System.Windows.Extensions.dll
+E:\Windows\Underway\Project\Store\Store\obj\Release\net7.0\PubTmp\Out\Store.Core.dll
+E:\Windows\Underway\Project\Store\Store\obj\Release\net7.0\PubTmp\Out\Store.EF.dll
+E:\Windows\Underway\Project\Store\Store\obj\Release\net7.0\PubTmp\Out\Store.EF.pdb
+E:\Windows\Underway\Project\Store\Store\obj\Release\net7.0\PubTmp\Out\Store.Core.pdb
 E:\Windows\Underway\Project\Store\Store\obj\Release\net7.0\PubTmp\Out\Store.deps.json

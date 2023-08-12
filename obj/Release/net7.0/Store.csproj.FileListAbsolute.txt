@@ -259,3 +259,10 @@ E:\Windows\Underway\Project\Store\Store\obj\Release\net7.0\refint\Store.dll
 E:\Windows\Underway\Project\Store\Store\obj\Release\net7.0\Store.pdb
 E:\Windows\Underway\Project\Store\Store\obj\Release\net7.0\Store.genruntimeconfig.cache
 E:\Windows\Underway\Project\Store\Store\obj\Release\net7.0\ref\Store.dll
+E:\Windows\Underway\Project\Store\Store\bin\Release\net7.0\Store.staticwebassets.runtime.json
+E:\Windows\Underway\Project\Store\Store\bin\Release\net7.0\AutoMapper.dll
+E:\Windows\Underway\Project\Store\Store\bin\Release\net7.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
+E:\Windows\Underway\Project\Store\Store\bin\Release\net7.0\Store.Core.dll
+E:\Windows\Underway\Project\Store\Store\bin\Release\net7.0\Store.EF.dll
+E:\Windows\Underway\Project\Store\Store\bin\Release\net7.0\Store.EF.pdb
+E:\Windows\Underway\Project\Store\Store\bin\Release\net7.0\Store.Core.pdb

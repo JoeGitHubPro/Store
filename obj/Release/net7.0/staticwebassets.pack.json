@@ -1,0 +1,29 @@
+{
+  "Files": [
+    {
+      "Id": "E:\\Windows\\Underway\\Project\\Store\\Store\\wwwroot\\ProductsImages\\be9f0984-491d-47d8-8b6e-f54ea2b4c0e3.jpg",
+      "PackagePath": "staticwebassets\\ProductsImages\\be9f0984-491d-47d8-8b6e-f54ea2b4c0e3.jpg"
+    },
+    {
+      "Id": "E:\\Windows\\Underway\\Project\\Store\\Store\\wwwroot\\ProductsImages\\d205360a-b036-4252-8b11-9d76670924a7.jpg",
+      "PackagePath": "staticwebassets\\ProductsImages\\d205360a-b036-4252-8b11-9d76670924a7.jpg"
+    },
+    {
+      "Id": "obj\\Release\\net7.0\\staticwebassets\\msbuild.Store.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Release\\net7.0\\staticwebassets\\msbuild.build.Store.props",
+      "PackagePath": "build\\Store.props"
+    },
+    {
+      "Id": "obj\\Release\\net7.0\\staticwebassets\\msbuild.buildMultiTargeting.Store.props",
+      "PackagePath": "buildMultiTargeting\\Store.props"
+    },
+    {
+      "Id": "obj\\Release\\net7.0\\staticwebassets\\msbuild.buildTransitive.Store.props",
+      "PackagePath": "buildTransitive\\Store.props"
+    }
+  ],
+  "ElementsToRemove": []
+}
